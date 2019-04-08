@@ -22,6 +22,13 @@ class DetailView(generic.DetailView):
     template_name = 'polls/detail.html'
 
 
+    def get_queryset(self):
+        """
+        Excludes any questions from being shown by this view if they haven't yet been published
+        """
+        return Question.objects.filter(pub_date__lte=timezone.now())
+
+
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
@@ -44,3 +51,4 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
